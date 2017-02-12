@@ -3,11 +3,22 @@
 // load modules
 var express = require('express');
 var morgan = require('morgan');
+var mongoose = require('mongoose');
 var courses = require('./routes/courses');
 var users = require('./routes/users');
 
 var app = express();
 
+mongoose.connect('mongodb://localhost/course-rating');
+var db = mongoose.connection;
+
+db.on('error', function(err) {
+	console.log('Error connecting to the database', err);
+});
+
+db.once('open', function() {
+	console.log('Succesfully connected to the database');
+});
 // set our port
 app.set('port', process.env.PORT || 5000);
 
