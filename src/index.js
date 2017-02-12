@@ -3,6 +3,8 @@
 // load modules
 var express = require('express');
 var morgan = require('morgan');
+var courses = require('./routes/courses');
+var users = require('./routes/users');
 
 var app = express();
 
@@ -11,6 +13,9 @@ app.set('port', process.env.PORT || 5000);
 
 // morgan gives us http request logging
 app.use(morgan('dev'));
+
+app.use('/api/courses', courses);
+// app.use('/api/users', users);
 
 // setup our static route to serve files from the "public" folder
 app.use('/', express.static('public'));
