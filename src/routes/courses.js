@@ -29,14 +29,14 @@ router.put('/:cID', function(req, res) {
 
 // /api/courses/:courseId/reviews
 // POST - Creates a review for the specified course
-router.post(':cID/reviews', function(req, res) {
-	res.send('Creates a review for the specified course');
+router.post('/:cID/reviews', function(req, res) {
+	res.send('POST - Creates a review for the specified course');
 });
 
 // /api/courses/:courseId/reviews/:id
 // DELETE - Deletes a review
-router.delete(':cID/reviews/:rID', function(req, res) {
-	
+router.delete('/:cID/reviews/:rID', function(req, res) {
+	res.send('DELETE - Deletes a review');
 });
 
 module.exports = router;
