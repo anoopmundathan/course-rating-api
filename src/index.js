@@ -21,6 +21,22 @@ app.use('/', express.static('public'));
 app.use('/api/courses', courses);
 app.use('/api/users', users);
 
+// middleware function to catch 404 error
+app.use(function(req, res, next) {
+	var err = new Error('Not Found');
+	err.status = 404;
+	next(err);
+});
+
+// global error handler
+app.use(function(err, req, res, next) {
+	res.status(err.status || 500);
+	res.json({
+		error: {
+			message: err.message
+		}
+	});
+});
 
 // start listening on our port
 var server = app.listen(app.get('port'), function() {

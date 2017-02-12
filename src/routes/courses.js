@@ -5,7 +5,19 @@ var router = express.Router();
 
 // GET /api/courses - Returns a list of courses
 router.get('/', function(req, res) {
-	res.send('GET - Returns a list of courses');
+	var courses = [
+		{
+			_id: 1,
+			title: "Java"
+		},
+		{
+			_id: 2,
+			title: "XML"
+		}
+	];
+
+	// res.send('GET - Returns a list of courses');
+	res.json(courses);
 });
 
 // POST /api/courses - Create a course
