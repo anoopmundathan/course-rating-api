@@ -14,11 +14,13 @@ app.set('port', process.env.PORT || 5000);
 // morgan gives us http request logging
 app.use(morgan('dev'));
 
-app.use('/api/courses', courses);
-// app.use('/api/users', users);
-
 // setup our static route to serve files from the "public" folder
 app.use('/', express.static('public'));
+
+// routes handling 
+app.use('/api/courses', courses);
+app.use('/api/users', users);
+
 
 // start listening on our port
 var server = app.listen(app.get('port'), function() {
