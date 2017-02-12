@@ -7,6 +7,10 @@ var mongoose = require('mongoose');
 var courses = require('./routes/courses');
 var users = require('./routes/users');
 
+var User = require('./models/user').User;
+var Review = require('./models/review').Review;
+var Course = require('./models/course').Course;
+
 var app = express();
 
 mongoose.connect('mongodb://localhost/course-rating');
