@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "mongoose-seeder": "1.2.1",
     "nodemon": "^1.9.1",
     "webpack": "^1.12.14"
   },

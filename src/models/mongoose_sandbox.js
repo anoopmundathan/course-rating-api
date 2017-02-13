@@ -15,6 +15,7 @@ db.on('error', function(err) {
 
 db.once('open', function() {
 	console.log('Succesfully connected to Database');
+
 });
 
 var user = new User({

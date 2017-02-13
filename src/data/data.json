@@ -3,7 +3,7 @@
     "_model": "User",
     "joesmith": {
       "_id": "57029ed4795118be119cc437",
-      "fullName": "Joe Smith",
+      "fullName": "Anoop MundathanSmith",
       "emailAddress": "joe@smith.com",
       "password": "password",
       "confirmPassword": "password"
