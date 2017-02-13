@@ -2,22 +2,13 @@
 
 var express = require('express');
 var router = express.Router();
+var Course = require('../models/course').Course;
 
 // GET /api/courses - Returns a list of courses
 router.get('/', function(req, res) {
-	var courses = [
-		{
-			_id: 1,
-			title: "Java"
-		},
-		{
-			_id: 2,
-			title: "XML"
-		}
-	];
-
-	// res.send('GET - Returns a list of courses');
-	res.json(courses);
+	Course.find({}, function(err, courses) {
+		res.json(courses);
+	})
 });
 
 // POST /api/courses - Create a course
