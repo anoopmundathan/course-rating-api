@@ -20,7 +20,17 @@ db.once('open', function() {
 	console.log('Succesfully connected to Database');
 	seeder.seed(data).then(function(dbData) {
 		console.log('Created database');
+
+		var id = {
+			_id: '57029ed4795118be119cc43d'
+		}
+		Course.findById(id, function(err, course) {
+			course.overallRating;
+			console.log(course.overallRating);
+		});
 	}).catch(function(err) {
 		console.log('mongoose-seeder error', err);
 	});
+
+
 });

@@ -2,17 +2,21 @@
 
 var express = require('express');
 var router = express.Router();
+
+// Import models
 var Course = require('../models/course').Course;
 
 // GET /api/courses - Returns a list of courses
 router.get('/', function(req, res) {
 	Course.find({}, function(err, courses) {
+		if(err) return next(err);
 		res.json(courses);
-	})
+	});
 });
 
 // POST /api/courses - Create a course
 router.post('/', function(req, res) {
+	
 	res.status(201);
 	res.send('PUT - Create a course');
 });

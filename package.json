@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "nodemon ./src/index.js localhost 5000"
+    "start": "nodemon ./src/index.js localhost 5000",
+    "bundle": "./node_modules/.bin/webpack"
   },
   "author": "",
   "license": "ISC",

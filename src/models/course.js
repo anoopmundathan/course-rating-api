@@ -32,6 +32,11 @@ var courseSchema = new Schema({
 	]
 });
 
+
+courseSchema.virtual('overallRating').get(function() {
+
+});
+
 // create model
 var Course = mongoose.model('Course', courseSchema);
 

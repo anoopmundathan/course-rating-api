@@ -68,10 +68,9 @@ webpackJsonp([0],[
 	
 	  _this.courses = [];
 	  _this.userIsAuthenticated = sessionService.currentUser.isAuthenticated;
-	  
 	  dataService.getCourses().then(
 	    function(response) {
-	      var courses = response.data.data;
+	      var courses = response.data;
 	      _this.courses = courses;
 	    },
 	    function(response) {
