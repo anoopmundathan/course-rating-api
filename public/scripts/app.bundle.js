@@ -149,6 +149,7 @@ webpackJsonp([0],[
 	  };
 	
 	  function init() {
+	    console.log('init');
 	    getCourse();
 	    resetUserReview();
 	  }
@@ -156,7 +157,8 @@ webpackJsonp([0],[
 	  function getCourse() {
 	    dataService.getCourse(_this.courseId).then(
 	      function(response) {
-	        var course = response.data.data[0];
+	        console.log(response.data);
+	        var course = response.data;
 	        _this.course = course;
 	
 	        // only allow the current user to edit their own courses

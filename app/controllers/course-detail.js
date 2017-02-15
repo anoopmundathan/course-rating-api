@@ -61,6 +61,7 @@ function CourseDetailController(dataService, errorHandlerService, sessionService
   };
 
   function init() {
+    console.log('init');
     getCourse();
     resetUserReview();
   }
@@ -68,7 +69,7 @@ function CourseDetailController(dataService, errorHandlerService, sessionService
   function getCourse() {
     dataService.getCourse(_this.courseId).then(
       function(response) {
-        var course = response.data.data[0];
+        var course = response.data;
         _this.course = course;
 
         // only allow the current user to edit their own courses

@@ -22,11 +22,16 @@ router.post('/', function(req, res) {
 
 // GET /api/course/:id - Returns a single course
 router.get('/:cID', function(req, res) {
-	Course.findById(req.params.cID, function(err, course) {
-		if (err) return next(err);
-		res.json(course);
-	})
-	// res.send('GET - Returns a single course');
+	
+	// When returning a single course for the GET /api/courses/:id route, 
+	// use Mongoose population to load the related user and reviews documents.
+	Course.findById(req.params.cID)
+		.populate('reviews')
+		.populate('user')
+		.exec(function(err, course) {
+			if (err) return next(err);
+			res.json(course);
+		});
 });
 
 // PUT /api/courses/:id - Updates a course

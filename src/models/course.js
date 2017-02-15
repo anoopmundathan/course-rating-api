@@ -10,7 +10,7 @@ var Schema = mongoose.Schema;
 var courseSchema = new Schema({
 	user: {
 		type: Schema.ObjectId,
-		ref: User
+		ref: 'User'
 	},
 	title: String,
 	description: String,
@@ -26,15 +26,13 @@ var courseSchema = new Schema({
 	reviews: [
 		{
 			type: Schema.ObjectId,
-			ref: Review
+			ref: 'Review'
 		}
 
 	]
 });
 
-
 courseSchema.virtual('overallRating').get(function() {
-
 });
 
 // create model
