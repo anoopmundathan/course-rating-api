@@ -76,6 +76,7 @@ webpackJsonp([0],[
 	    function(response) {
 	      errorHandlerService.handleError(response);
 	    });
+	
 	}
 	
 	module.exports = CoursesController;
@@ -1110,8 +1111,9 @@ webpackJsonp([0],[
 
 	'use strict';
 	
-	function config($httpProvider, $routeProvider) {
+	function config($httpProvider, $routeProvider, $locationProvider) {
 	  $httpProvider.interceptors.push('httpInterceptorService');
+	  $locationProvider.hashPrefix('');
 	
 	  $routeProvider
 	    .when('/', {

@@ -1,7 +1,8 @@
 'use strict';
 
-function config($httpProvider, $routeProvider) {
+function config($httpProvider, $routeProvider, $locationProvider) {
   $httpProvider.interceptors.push('httpInterceptorService');
+  $locationProvider.hashPrefix('');
 
   $routeProvider
     .when('/', {

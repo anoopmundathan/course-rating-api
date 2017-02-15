@@ -14,6 +14,7 @@ function CoursesController(dataService, errorHandlerService, sessionService, $lo
     function(response) {
       errorHandlerService.handleError(response);
     });
+
 }
 
 module.exports = CoursesController;

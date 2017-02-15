@@ -9,21 +9,24 @@ var Course = require('../models/course').Course;
 // GET /api/courses - Returns a list of courses
 router.get('/', function(req, res) {
 	Course.find({}, function(err, courses) {
-		if(err) return next(err);
+		if (err) return next(err);
 		res.json(courses);
 	});
 });
 
 // POST /api/courses - Create a course
 router.post('/', function(req, res) {
-	
 	res.status(201);
 	res.send('PUT - Create a course');
 });
 
 // GET /api/course/:id - Returns a single course
 router.get('/:cID', function(req, res) {
-	res.send('GET - Returns a single course');
+	Course.findById(req.params.cID, function(err, course) {
+		if (err) return next(err);
+		res.json(course);
+	})
+	// res.send('GET - Returns a single course');
 });
 
 // PUT /api/courses/:id - Updates a course
