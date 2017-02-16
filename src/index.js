@@ -2,6 +2,7 @@
 
 // load modules
 var express = require('express');
+var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var mongoose = require('mongoose');
 var courses = require('./routes/courses');
@@ -28,6 +29,10 @@ app.set('port', process.env.PORT || 5000);
 
 // morgan gives us http request logging
 app.use(morgan('dev'));
+
+// parse incoming requests
+app.use(bodyParser.urlencoded({ extended : false}));
+app.use(bodyParser.json());
 
 // setup our static route to serve files from the "public" folder
 app.use('/', express.static('public'));
