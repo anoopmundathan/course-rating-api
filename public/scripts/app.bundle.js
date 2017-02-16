@@ -157,7 +157,6 @@ webpackJsonp([0],[
 	  function getCourse() {
 	    dataService.getCourse(_this.courseId).then(
 	      function(response) {
-	        console.log(response.data);
 	        var course = response.data;
 	        _this.course = course;
 	
@@ -437,6 +436,7 @@ webpackJsonp([0],[
 	      confirmPassword: _this.confirmPassword
 	    };
 	
+	    
 	    dataService.createUser(user).then(
 	      function() {
 	        authService.signIn(user.emailAddress, user.password).then(
@@ -445,11 +445,12 @@ webpackJsonp([0],[
 	          },
 	          function(response) {
 	            errorHandlerService.handleError(response, displayValidationErrors);
-	          });
+	        });
 	      },
 	      function(response) {
 	        errorHandlerService.handleError(response, displayValidationErrors);
-	      });
+	      }
+	    );
 	  };
 	
 	  function displayValidationErrors(validationErrors) {
@@ -1317,6 +1318,7 @@ webpackJsonp([0],[
 	  var _this = this;
 	
 	  _this.signIn = function(emailAddress, password) {
+	
 	    var validationErrors = validationService.getValidationErrorsObject();
 	
 	    // validate that we have an email address and password
@@ -1341,30 +1343,32 @@ webpackJsonp([0],[
 	    currentUser.emailAddress = emailAddress;
 	    currentUser.password = password;
 	
+	    return $q.resolve(null);
+	    
 	    // attempt to get the user from the data service
-	    return dataService.getUser().then(
-	      function(response) {
-	        var user = response && response.data && response.data.data && response.data.data[0];
+	    // return dataService.getUser().then(
+	    //   function(response) {
+	    //     var user = response && response.data && response.data.data && response.data.data[0];
 	
-	        currentUser.isAuthenticated = true;
-	        currentUser._id = user._id;
-	        currentUser.fullName = user.fullName;
+	    //     currentUser.isAuthenticated = true;
+	    //     currentUser._id = user._id;
+	    //     currentUser.fullName = user.fullName;
 	
-	        // return null to the caller indicating that there were no errors
-	        return $q.resolve(null);
-	      },
-	      function(response) {
-	        sessionService.resetSession();
+	    //     // return null to the caller indicating that there were no errors
+	    //     return $q.resolve(null);
+	    //   },
+	    //   function(response) {
+	    //     sessionService.resetSession();
 	
-	        // add a validation indicating that the login failed
-	        validationService.addValidationError(
-	          validationErrors, 'password',
-	          validationService.validationCodes.loginFailure,
-	          'The login failed for the provided email address and password.');
+	    //     // add a validation indicating that the login failed
+	    //     validationService.addValidationError(
+	    //       validationErrors, 'password',
+	    //       validationService.validationCodes.loginFailure,
+	    //       'The login failed for the provided email address and password.');
 	
-	        // return the validation errors to the caller
-	        return validationService.prepareErrorResponse(validationErrors);
-	      });
+	    //     // return the validation errors to the caller
+	    //     return validationService.prepareErrorResponse(validationErrors);
+	    //   });
 	  }
 	
 	  _this.signOut = function() {

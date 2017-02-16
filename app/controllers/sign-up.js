@@ -19,6 +19,7 @@ function SignUpController(authService, dataService, errorHandlerService, $locati
       confirmPassword: _this.confirmPassword
     };
 
+    
     dataService.createUser(user).then(
       function() {
         authService.signIn(user.emailAddress, user.password).then(
@@ -27,11 +28,12 @@ function SignUpController(authService, dataService, errorHandlerService, $locati
           },
           function(response) {
             errorHandlerService.handleError(response, displayValidationErrors);
-          });
+        });
       },
       function(response) {
         errorHandlerService.handleError(response, displayValidationErrors);
-      });
+      }
+    );
   };
 
   function displayValidationErrors(validationErrors) {

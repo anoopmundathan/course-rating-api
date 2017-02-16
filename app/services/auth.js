@@ -4,6 +4,7 @@ function AuthService(sessionService, validationService, dataService, $q) {
   var _this = this;
 
   _this.signIn = function(emailAddress, password) {
+
     var validationErrors = validationService.getValidationErrorsObject();
 
     // validate that we have an email address and password

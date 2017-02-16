@@ -6,7 +6,12 @@ var router = express.Router();
 
 // GET /api/users - Returns the current user
 router.get('/', function(req, res) {
-	res.send('GET - Returns the current user');
+	User.find({
+		emailAddress: req.body.emailAddress
+	}, function(err, user) {
+		if (err) return next(err);
+		res.send(user);
+	});
 });
 
 // POST /api/users - Creates a user
@@ -25,19 +30,16 @@ router.post('/', function(req, res, next) {
 			return next(err);
 		}
 
-		var user = {
-			fullName: req.body.fullName,
-			emailAddress: req.body.emailAddress,
-			hashedPassword: req.body.password
-		}
-
+		req.body.hashedPassword = req.body.password;
 		// save to database
-		User.create(user, function(err, user) {
+		User.create(req.body, function(err, user) {
 			if (err) {
 				return next(err);
 			} else {
-				res.status(201);
-				res.json(user);
+				// res.status(201);
+				// res.json(user);
+				res.location('/');
+				res.send(201, null);
 			}
 		});
 		
