@@ -25,8 +25,14 @@ router.post('/', function(req, res, next) {
 			return next(err);
 		}
 
+		var user = {
+			fullName: req.body.fullName,
+			emailAddress: req.body.emailAddress,
+			hashedPassword: req.body.password
+		}
+
 		// save to database
-		User.create(req.body, function(err, user) {
+		User.create(user, function(err, user) {
 			if (err) {
 				return next(err);
 			} else {
