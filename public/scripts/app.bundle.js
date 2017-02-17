@@ -1343,32 +1343,32 @@ webpackJsonp([0],[
 	    currentUser.emailAddress = emailAddress;
 	    currentUser.password = password;
 	
-	    return $q.resolve(null);
-	    
 	    // attempt to get the user from the data service
-	    // return dataService.getUser().then(
-	    //   function(response) {
-	    //     var user = response && response.data && response.data.data && response.data.data[0];
+	    return dataService.getUser().then(
+	      function(response) {
 	
-	    //     currentUser.isAuthenticated = true;
-	    //     currentUser._id = user._id;
-	    //     currentUser.fullName = user.fullName;
+	        // var user = response && response.data && response.data.data && response.data.data[0];
+	        var user = response.data[0];
+	  
+	        currentUser.isAuthenticated = true;
+	        currentUser._id = user._id;
+	        currentUser.fullName = user.fullName;
 	
-	    //     // return null to the caller indicating that there were no errors
-	    //     return $q.resolve(null);
-	    //   },
-	    //   function(response) {
-	    //     sessionService.resetSession();
+	        // return null to the caller indicating that there were no errors
+	        return $q.resolve(null);
+	      },
+	      function(response) {
+	        sessionService.resetSession();
 	
-	    //     // add a validation indicating that the login failed
-	    //     validationService.addValidationError(
-	    //       validationErrors, 'password',
-	    //       validationService.validationCodes.loginFailure,
-	    //       'The login failed for the provided email address and password.');
+	        // add a validation indicating that the login failed
+	        validationService.addValidationError(
+	          validationErrors, 'password',
+	          validationService.validationCodes.loginFailure,
+	          'The login failed for the provided email address and password.');
 	
-	    //     // return the validation errors to the caller
-	    //     return validationService.prepareErrorResponse(validationErrors);
-	    //   });
+	        // return the validation errors to the caller
+	        return validationService.prepareErrorResponse(validationErrors);
+	      });
 	  }
 	
 	  _this.signOut = function() {

@@ -1,17 +1,29 @@
 'use strict';
 
 var express = require('express');
+var auth = require('basic-auth');
 var User = require('../models/user').User;
 var router = express.Router();
 
 // GET /api/users - Returns the current user
 router.get('/', function(req, res) {
-	User.find({
-		emailAddress: req.body.emailAddress
-	}, function(err, user) {
-		if (err) return next(err);
-		res.send(user);
-	});
+
+	// parse authorization header
+	var user = auth(req);
+
+	// validate email and password
+	if (user.name && user.pass) {
+
+		User.find({
+			emailAddress: user.name
+		}, function(err, user) {
+			if (err) return next(err);
+			res.send(user);
+		});
+	} else {
+		// send error
+	}
+	
 });
 
 // POST /api/users - Creates a user
@@ -36,10 +48,11 @@ router.post('/', function(req, res, next) {
 			if (err) {
 				return next(err);
 			} else {
-				// res.status(201);
-				// res.json(user);
-				res.location('/');
-				res.send(201, null);
+				// res.location('/');
+				// res.send(201, null);
+				return res.status(201)
+						  .location('/')
+						  .end()
 			}
 		});
 		
