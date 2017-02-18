@@ -3,7 +3,7 @@
 var express = require('express');
 var router = express.Router();
 
-// Import models
+// import models
 var Course = require('../models/course').Course;
 
 // GET /api/courses - Returns a list of courses

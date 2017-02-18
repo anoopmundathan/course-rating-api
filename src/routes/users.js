@@ -6,7 +6,7 @@ var User = require('../models/user').User;
 var router = express.Router();
 
 // GET /api/users - Returns the current user
-router.get('/', function(req, res) {
+router.get('/', function(req, res, next) {
 
 	// parse authorization header
 	var user = auth(req);
@@ -14,14 +14,20 @@ router.get('/', function(req, res) {
 	// validate email and password
 	if (user.name && user.pass) {
 
-		User.find({
-			emailAddress: user.name
-		}, function(err, user) {
-			if (err) return next(err);
-			res.send(user);
+		User.authenticate(user.name, user.pass, function(err, user) {
+			if (err || !user) {
+				var err = new Error('Wrong email or Password');
+				err.status = 401;
+				return next(err);
+			} else {
+				res.send(user);
+			}
 		});
+
 	} else {
-		// send error
+		var err = new Error('Enter all fields');
+		err.status = 404;
+		return next(err);
 	}
 	
 });
