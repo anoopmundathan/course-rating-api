@@ -3,7 +3,7 @@
 function DataService($http) {
 
   this.getUser = function() {
-    return $http.get('api/users/' + );
+    return $http.get('api/users/');
   };
 
   this.createUser = function(user) {

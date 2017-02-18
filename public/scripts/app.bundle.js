@@ -149,7 +149,6 @@ webpackJsonp([0],[
 	  };
 	
 	  function init() {
-	    console.log('init');
 	    getCourse();
 	    resetUserReview();
 	  }
@@ -436,7 +435,6 @@ webpackJsonp([0],[
 	      confirmPassword: _this.confirmPassword
 	    };
 	
-	    
 	    dataService.createUser(user).then(
 	      function() {
 	        authService.signIn(user.emailAddress, user.password).then(
@@ -1209,7 +1207,7 @@ webpackJsonp([0],[
 	function DataService($http) {
 	
 	  this.getUser = function() {
-	    return $http.get('api/users');
+	    return $http.get('api/users/');
 	  };
 	
 	  this.createUser = function(user) {
@@ -1348,8 +1346,8 @@ webpackJsonp([0],[
 	      function(response) {
 	
 	        // var user = response && response.data && response.data.data && response.data.data[0];
-	        var user = response.data[0];
-	  
+	        var user = response.data;
+	        
 	        currentUser.isAuthenticated = true;
 	        currentUser._id = user._id;
 	        currentUser.fullName = user.fullName;

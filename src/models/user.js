@@ -37,12 +37,15 @@ userSchema.statics.authenticate = function(email, password, callback) {
           	return callback(error);
 		}
 
-		// is password matching 
+		// If a user was found for the provided email address, 
+		// then check the user's password.
         bcrypt.compare(password, user.hashedPassword, function(error, result) {
 
         	if (error) {
         		return callback(error);	
         	} else if (result === true) {
+        		// If they match, then set the user's information on the request 
+        		// so that each following middleware function has access to it.
         		return callback(null, user);
         	} else {
         		var error = new Error('Password is not matching');

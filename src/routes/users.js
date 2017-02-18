@@ -11,16 +11,21 @@ router.get('/', function(req, res, next) {
 	// parse authorization header
 	var user = auth(req);
 
-	// validate email and password
+	// If credentials are available, then attempt to get the user 
+	// from the database by their email address.
 	if (user.name && user.pass) {
 
+		// Add a middleware function that attempts to get the user credentials from the request.
 		User.authenticate(user.name, user.pass, function(err, user) {
 			if (err || !user) {
 				var err = new Error('Wrong email or Password');
 				err.status = 401;
 				return next(err);
 			} else {
-				res.send(user);
+				res.send({
+					_id: user._id,
+					fullName: user.fullName
+				});
 			}
 		});
 

@@ -61,7 +61,6 @@ function CourseDetailController(dataService, errorHandlerService, sessionService
   };
 
   function init() {
-    console.log('init');
     getCourse();
     resetUserReview();
   }
