@@ -34,8 +34,8 @@ function AuthService(sessionService, validationService, dataService, $q) {
       function(response) {
 
         // var user = response && response.data && response.data.data && response.data.data[0];
-        var user = response.data;
-        
+        var user = response && response.data;
+  
         currentUser.isAuthenticated = true;
         currentUser._id = user._id;
         currentUser.fullName = user.fullName;

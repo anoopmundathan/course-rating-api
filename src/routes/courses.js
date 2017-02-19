@@ -8,16 +8,43 @@ var Course = require('../models/course').Course;
 
 // GET /api/courses - Returns a list of courses
 router.get('/', function(req, res) {
-	Course.find({}, function(err, courses) {
-		if (err) return next(err);
-		res.json(courses);
-	});
+
+	Course.find({}, '_id title')
+		.exec(function(err, courses) {
+			if (err) return next(err);
+			res.json(courses);
+		});
 });
 
 // POST /api/courses - Create a course
-router.post('/', function(req, res) {
-	res.status(201);
-	res.send('PUT - Create a course');
+router.post('/', function(req, res, next) {
+
+	if (req.body.title &&
+		req.body.description) {	
+
+		req.body.steps.forEach(function(step) {
+			
+			if (!step.title || !step.description) {
+				var err = new Error('Step should have title and description');
+				err.status = 201;
+				return next(err);
+			}
+
+		});
+
+		Course.create(req.body, function(err) {
+			if (err) return next(err);
+			return res.status(201)
+						  .location('/')
+						  .end();
+		});
+
+	} else {
+		var err = new Error('All fields are required');
+		err.status = 404;
+		return next(err);
+	}
+
 });
 
 // GET /api/course/:id - Returns a single course

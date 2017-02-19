@@ -12,7 +12,10 @@ var reviewSchema = new Schema({
 		ref: User
 	},
 	postedOn: Date,
-	rating: Number,
+	rating: {
+		type: Number,
+		required: true
+	},
 	review: String 
 });
 

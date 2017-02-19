@@ -12,15 +12,27 @@ var courseSchema = new Schema({
 		type: Schema.ObjectId,
 		ref: 'User'
 	},
-	title: String,
-	description: String,
+	title: {
+		type: String,
+		required: true
+	},
+	description: {
+		type: String,
+		required: true
+	},
 	estimatedTime: String,
 	materialsNeeded: String,
 	steps: [
 		{
 			stepNumber: Number,
-			title: String,
-			description: String
+			title: {
+				type: String,
+				required: true
+			},
+			description: {
+				type: String,
+				required: true
+			}
 		}
 	],
 	reviews: [
