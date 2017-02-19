@@ -3,6 +3,8 @@
 var express = require('express');
 var router = express.Router();
 
+var formatError = require('../middleware/format-error');
+
 // import models
 var Course = require('../models/course').Course;
 
@@ -19,32 +21,16 @@ router.get('/', function(req, res) {
 // POST /api/courses - Create a course
 router.post('/', function(req, res, next) {
 
-	if (req.body.title &&
-		req.body.description) {	
-
-		req.body.steps.forEach(function(step) {
-			
-			if (!step.title || !step.description) {
-				var err = new Error('Step should have title and description');
-				err.status = 201;
-				return next(err);
-			}
-
-		});
-
-		Course.create(req.body, function(err) {
-			if (err) return next(err);
+	Course.create(req.body, function(err) {
+		
+		if (err) {
+			formatError(err, req, res, next);
+		} else {
 			return res.status(201)
-						  .location('/')
-						  .end();
-		});
-
-	} else {
-		var err = new Error('All fields are required');
-		err.status = 404;
-		return next(err);
-	}
-
+				  .location('/')
+				  .end();
+		}
+	});
 });
 
 // GET /api/course/:id - Returns a single course
