@@ -2,8 +2,10 @@
 
 var express = require('express');
 var auth = require('basic-auth');
-var User = require('../models/user').User;
+var formatError = require('../middleware/format-error');
 var router = express.Router();
+
+var User = require('../models/user').User;
 
 // GET /api/users - Returns the current user
 router.get('/', function(req, res, next) {
@@ -40,38 +42,47 @@ router.get('/', function(req, res, next) {
 // POST /api/users - Creates a user
 router.post('/', function(req, res, next) {
 
-	// all fields are available in the request
-	if (req.body.fullName && 
-		req.body.emailAddress &&
-		req.body.password &&
-		req.body.confirmPassword) {
-
-		// confirm password is matching
-		if (req.body.password !== req.body.confirmPassword) {
-			var err = new Error('Password is not matching');
-			err.status = 404;
-			return next(err);
-		}
-
-		req.body.hashedPassword = req.body.password;
-		// save to database
-		User.create(req.body, function(err, user) {
+		User.create(req.body, function(err) {
 			if (err) {
-				return next(err);
+				return formatError(err, req, res, next);
 			} else {
-				// res.location('/');
-				// res.send(201, null);
 				return res.status(201)
-						  .location('/')
-						  .end()
+					.location('/')
+					.end();	
 			}
 		});
+	
+	// all fields are available in the request
+	// if (req.body.fullName && 
+	// 	req.body.emailAddress &&
+	// 	req.body.password &&
+	// 	req.body.confirmPassword) {
+
+	// // confirm password is matching
+	// if (req.body.password !== req.body.confirmPassword) {
+	// 	var err = new Error('Password is not matching');
+	// 	err.status = 404;
+	// 	return next(err);
+	// }
+
+	// 	req.body.hashedPassword = req.body.password;
+	// 	// save to database
+	// 	User.create(req.body, function(err, user) {
+	// 		if (err) {
+	// 			return formatError(err, req, res, next);
+	// 		} else {
+	// 			// res.send(201, null);
+	// 			return res.status(201)
+	// 					  .location('/')
+	// 					  .end()
+	// 		}
+	// 	});
 		
-	} else {
-		var err = new Error('All fields are required');
-		err.status = 404;
-		return next(err);
-	}
+	// } else {
+	// 	var err = new Error('All fields are required');
+	// 	err.status = 404;
+	// 	return next(err);
+	// }
 });
 
 module.exports = router;
