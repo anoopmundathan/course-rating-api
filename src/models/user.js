@@ -13,7 +13,7 @@ var userSchema = new Schema({
 	},
 	emailAddress: {
 		type: String,
-		unique: true,
+		unique: [true, 'Email Address is already taken'],
 		required: [true, 'Email Address is required'],
 		validate: {
 			validator: emailValidator,
@@ -33,6 +33,7 @@ var userSchema = new Schema({
 function emailValidator(email) {
 	return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
 }
+
 
 // validate password
 userSchema.path('password').validate(function(password) {
@@ -75,6 +76,14 @@ userSchema.pre('save', function(next) {
 	});
 });
 
+userSchema.post('save', function(error, doc, next) {
+  if (error.name === 'MongoError' && error.code === 11000) {
+    next(new Error('Email must be unique'));
+  } else {
+    next(error);
+  }
+});
+
 // authenticate user
 userSchema.statics.authenticate = function(email, password, callback) {
 
@@ -92,7 +101,7 @@ userSchema.statics.authenticate = function(email, password, callback) {
 
 		// If a user was found for the provided email address, 
 		// then check the user's password.
-        bcrypt.compare(password, user.hashedPassword, function(error, result) {
+        bcrypt.compare(password, user.password, function(error, result) {
 
         	if (error) {
         		return callback(error);	
