@@ -26,9 +26,7 @@ router.post('/', function(req, res, next) {
 		if (err) {
 			formatError(err, req, res, next);
 		} else {
-			return res.status(201)
-				  .location('/')
-				  .end();
+			return res.status(201).location('/').end();
 		}
 	});
 });
@@ -49,19 +47,22 @@ router.get('/:cID', function(req, res, next) {
 
 // PUT /api/courses/:id - Updates a course
 router.put('/:cID', function(req, res, next) {
-	
-	console.log(req.body);
 
-	Course.findByIdAndUpdate(req.body._id, req.body, function(err, course) {
-		if(!course) {
+	var opt = { 
+		runValidators: true
+	}
+
+	Course.findByIdAndUpdate(req.body._id, req.body, opt, function(err, course) {
+		
+		if (err) {
+			formatError(err, req, res, next);
+		} else if (!course) {
 			var err = new Error('No Document found');
 			err.status = 401;
 			return next(err);
-		} else if (err) {
-			formatError(err, req, res, next);
-		}
-		return res.status(204)
-				  .end();
+		} 
+
+		return res.status(204).end();
 	});
 });
 
