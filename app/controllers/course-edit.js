@@ -84,7 +84,9 @@ function CourseEditController(dataService, errorHandlerService, sessionService,
   function getCourse() {
     dataService.getCourse(_this.courseId).then(
       function(response) {
-        var course = response.data.data[0];
+        
+
+        var course = response.data || response.data.data[0];
 
         // create a copy so that any changes made
         // do not affect the underlying in-memory data

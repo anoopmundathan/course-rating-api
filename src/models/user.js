@@ -13,7 +13,7 @@ var userSchema = new Schema({
 	},
 	emailAddress: {
 		type: String,
-		unique: [true, 'Email Address is already taken'],
+		unique: true,
 		required: [true, 'Email Address is required'],
 		validate: {
 			validator: emailValidator,
@@ -30,10 +30,10 @@ var userSchema = new Schema({
 	}
 });
 
+// validate email
 function emailValidator(email) {
 	return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
 }
-
 
 // validate password
 userSchema.path('password').validate(function(password) {
@@ -41,6 +41,7 @@ userSchema.path('password').validate(function(password) {
   	return regEx.test(this.password);
 }, "Password must contain at least 8 characters");
 
+// Mongoose pre 'validate' middleware hook
 userSchema.pre('validate', function(next) {
 	if (this.password !== this.confirmPassword) {
 

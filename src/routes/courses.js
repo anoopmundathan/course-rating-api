@@ -9,7 +9,7 @@ var formatError = require('../middleware/format-error');
 var Course = require('../models/course').Course;
 
 // GET /api/courses - Returns a list of courses
-router.get('/', function(req, res) {
+router.get('/', function(req, res, next) {
 
 	Course.find({}, '_id title')
 		.exec(function(err, courses) {
@@ -34,13 +34,13 @@ router.post('/', function(req, res, next) {
 });
 
 // GET /api/course/:id - Returns a single course
-router.get('/:cID', function(req, res) {
+router.get('/:cID', function(req, res, next) {
 	
 	// When returning a single course for the GET /api/courses/:id route, 
 	// use Mongoose population to load the related user and reviews documents.
 	Course.findById(req.params.cID)
 		.populate('reviews')
-		.populate('user')
+		.populate('user' , '_id fullName')
 		.exec(function(err, course) {
 			if (err) return next(err);
 			res.json(course);
@@ -48,9 +48,21 @@ router.get('/:cID', function(req, res) {
 });
 
 // PUT /api/courses/:id - Updates a course
-router.put('/:cID', function(req, res) {
-	res.status(204);
-	res.send('PUT - Updates a course');
+router.put('/:cID', function(req, res, next) {
+	
+	console.log(req.body);
+
+	Course.findByIdAndUpdate(req.body._id, req.body, function(err, course) {
+		if(!course) {
+			var err = new Error('No Document found');
+			err.status = 401;
+			return next(err);
+		} else if (err) {
+			formatError(err, req, res, next);
+		}
+		return res.status(204)
+				  .end();
+	});
 });
 
 // POST /api/courses/:courseId/reviews - Creates a review for the specified course
