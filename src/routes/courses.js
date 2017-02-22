@@ -4,7 +4,7 @@ var express = require('express');
 var router = express.Router();
 
 var formatError = require('../middleware/format-error');
-var mid = require('../middleware/authorization');
+var mid = require('../middleware/auth');
 // import models
 var Course = require('../models/course').Course;
 var Review = require('../models/review').Review;
@@ -47,7 +47,7 @@ router.get('/:cID', function(req, res, next) {
 });
 
 // PUT /api/courses/:id - Updates a course
-router.put('/:cID', mid.checkAuthorization, function(req, res, next) {
+router.put('/:cID', mid.authenticate, function(req, res, next) {
 
 
 	// The current user can only edit courses for themselves
@@ -75,6 +75,7 @@ router.put('/:cID', mid.checkAuthorization, function(req, res, next) {
     err.status = 401;
     return next(err);
   }
+
 });
 
 // POST /api/courses/:courseId/reviews - Creates a review for a specified course

@@ -1,7 +1,7 @@
 'use strict';
 
-var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
+var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
@@ -84,43 +84,6 @@ userSchema.post('save', function(error, doc, next) {
     next(error);
   }
 });
-
-// authenticate user
-userSchema.statics.authenticate = function(email, password, callback) {
-
-	// check email in the database
-	User.findOne({ 
-		emailAddress: email
-	}).exec(function(error, user) {
-		if (error) {
-			return callback(error);	
-		} else if (!user) {
-			var error = new Error('User is not found');
-          	error.status = 401;
-          	return callback(error);
-		}
-
-		// If a user was found for the provided email address, 
-		// then check the user's password.
-        bcrypt.compare(password, user.password, function(error, result) {
-
-        	if (error) {
-        		return callback(error);	
-        	} else if (result === true) {
-        		// If they match, then set the user's information on the request 
-        		// so that each following middleware function has access to it.
-        		return callback(null, user);
-        	} else {
-        		var error = new Error('Password is not matching');
-          		error.status = 401;
-          		return callback(error);
-        	}
-        
-        }); // end of bcrypt
-
-	}); // end of User.findOne
-
-}
 
 // create model
 var User = mongoose.model('User', userSchema);
