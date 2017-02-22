@@ -27,12 +27,12 @@ var courseSchema = new Schema({
 			{
 				stepNumber: Number,
 				title: {
-				type: String,
-				required: [true, 'Steps title is required']
+					type: String,
+					required: [true, 'Steps title is required']
 				},
 				description: {
-				type: String,
-				required: [true, 'Steps description is required']
+					type: String,
+					required: [true, 'Steps description is required']
 				}
 			}
 		],

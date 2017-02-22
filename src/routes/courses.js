@@ -4,9 +4,10 @@ var express = require('express');
 var router = express.Router();
 
 var formatError = require('../middleware/format-error');
-
+var mid = require('../middleware/authorization');
 // import models
 var Course = require('../models/course').Course;
+var Review = require('../models/review').Review;
 
 // GET /api/courses - Returns a list of courses
 router.get('/', function(req, res, next) {
@@ -46,15 +47,20 @@ router.get('/:cID', function(req, res, next) {
 });
 
 // PUT /api/courses/:id - Updates a course
-router.put('/:cID', function(req, res, next) {
+router.put('/:cID', mid.checkAuthorization, function(req, res, next) {
 
-	var opt = { 
+
+	// The current user can only edit courses for themselves
+  if (req.body.user._id === req.user._id.toJSON()) {
+
+  	var opt = { 
 		runValidators: true
 	}
 
-	Course.findByIdAndUpdate(req.body._id, req.body, opt, function(err, course) {
-		
-		if (err) {
+    Course.findOneAndUpdate({
+      _id: req.params.cID
+    }, req.body, function(err, course) {
+      if (err) {
 			formatError(err, req, res, next);
 		} else if (!course) {
 			var err = new Error('No Document found');
@@ -63,13 +69,48 @@ router.put('/:cID', function(req, res, next) {
 		} 
 
 		return res.status(204).end();
-	});
+    });
+  } else {
+    var err = new Error("Sorry, you can only edit a course for yourself.");
+    err.status = 401;
+    return next(err);
+  }
 });
 
-// POST /api/courses/:courseId/reviews - Creates a review for the specified course
-router.post('/:cID/reviews', function(req, res) {
-	res.status(201);
-	res.send('POST - Creates a review for the specified course');
+// POST /api/courses/:courseId/reviews - Creates a review for a specified course
+router.post('/:cID/reviews', function(req, res, next) {
+
+	// 1. Find user
+	// 2. Create review and assign to user
+	// 3. Update course with created review
+
+	Course.findById(req.params.cID, function(err, course) {
+		
+		if (err) { 
+			return next(err);
+		} else if (!course) {
+			var err = new Error('No Document found');
+			err.status = 401;
+			return next(err);
+		} 
+
+		Review.create({
+			user: course.user,
+			rating: req.body.rating,
+			review: req.body.review
+		}, function(err, review) {
+			if (err) return next(err);
+
+			Course.findByIdAndUpdate(course._id, {
+				$set: {
+					reviews: review._id
+				}
+			}, function(err) {
+				if (err) return next(err);
+				return res.status(204).location('/').end();
+			});
+		});
+	});
 });
 
 // DELETE /api/courses/:courseId/reviews/:id - Deletes a review

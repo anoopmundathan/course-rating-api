@@ -14,7 +14,7 @@ var reviewSchema = new Schema({
 	postedOn: Date,
 	rating: {
 		type: Number,
-		required: true
+		required: [true, 'Must have a rating']
 	},
 	review: String 
 });
