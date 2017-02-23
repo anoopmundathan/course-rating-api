@@ -49,7 +49,7 @@ function authenticate(req, res, next) {
 		}); // end of User.findOne
 
 	} else {
-		var err = new Error('Enter all fields');
+		var err = new Error('You are not authorized');
 		err.status = 404;
 		return next(err);
 	}

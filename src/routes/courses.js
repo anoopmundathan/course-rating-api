@@ -23,7 +23,6 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
 
 	Course.create(req.body, function(err) {
-		
 		if (err) {
 			formatError(err, req, res, next);
 		} else {
@@ -49,69 +48,106 @@ router.get('/:cID', function(req, res, next) {
 // PUT /api/courses/:id - Updates a course
 router.put('/:cID', mid.authenticate, function(req, res, next) {
 
-
 	// The current user can only edit courses for themselves
-  if (req.body.user._id === req.user._id.toJSON()) {
+  	if (req.body.user._id === req.user._id.toJSON()) {
 
-  	var opt = { 
-		runValidators: true
-	}
+  		var opt = { 
+			runValidators: true
+		}
 
-    Course.findOneAndUpdate({
-      _id: req.params.cID
-    }, req.body, function(err, course) {
-      if (err) {
-			formatError(err, req, res, next);
-		} else if (!course) {
-			var err = new Error('No Document found');
-			err.status = 401;
-			return next(err);
-		} 
+    	Course.findOneAndUpdate({
+      		_id: req.params.cID
+    	}, req.body, function(err, course) {
+      		if (err) {
+				formatError(err, req, res, next);
+			} else if (!course) {
+				var err = new Error('No Document found');
+				err.status = 401;
+				return next(err);
+			} else {
+				return res.status(204).end();
+			}
+    	}); // end of findOneAndUpdate
 
-		return res.status(204).end();
-    });
-  } else {
-    var err = new Error("Sorry, you can only edit a course for yourself.");
-    err.status = 401;
-    return next(err);
-  }
+  	} else {
+    	var err = new Error("Sorry, you can only edit a course for yourself.");
+    	err.status = 401;
+    	return next(err);
+  	}
 
 });
 
 // POST /api/courses/:courseId/reviews - Creates a review for a specified course
-router.post('/:cID/reviews', function(req, res, next) {
-
-	// 1. Find user
-	// 2. Create review and assign to user
-	// 3. Update course with created review
-
-	Course.findById(req.params.cID, function(err, course) {
-		
-		if (err) { 
-			return next(err);
-		} else if (!course) {
-			var err = new Error('No Document found');
-			err.status = 401;
-			return next(err);
-		} 
-
-		Review.create({
-			user: course.user,
-			rating: req.body.rating,
-			review: req.body.review
-		}, function(err, review) {
+router.post('/:cID/reviews', mid.authenticate, function(req, res, next) {
+	
+	// find course
+	Course.findById(req.params.cID)
+		.populate('user')
+		.populate('reviews')
+		.exec(function(err, course) {
 			if (err) return next(err);
+		
+			if (!course) {
+				var err = new Error('No document found');
+				err.status = 401;
+				return next(err);
+			} else {
 
-			Course.findByIdAndUpdate(course._id, {
-				$set: {
-					reviews: review._id
+				//TODO: owner of the course can not review
+				if (req.user._id === course.user._id) {
+					var err = new Error('You can not review your own course');
+					err.status = 401;
+					return next(err);
 				}
-			}, function(err) {
-				if (err) return next(err);
-				return res.status(204).location('/').end();
-			});
+				
+				//TODO: user can only post one review per course
+				// not happy with for loop here, need to explore better option
+				for (var i = 0; i < course.reviews.length; i++) {
+        			if (course.reviews[i].user.toJSON() === req.user._id.toJSON()) {
+          				var err = new Error('You can not have more than one review for this course');
+						err.status = 401;
+						return next(err);
+        			}
+      			}
+
+				//TODO: create review
+				var review = new Review(req.body);
+
+				//TODO: assign user to review
+				if (req.user._id) {
+					review.user = req.user._id;
+				} else {
+					var err = new Error('You must be logged in to post a review');
+					err.status = 401;
+					return next(err);
+				}
+
+				//TODO: posted date
+				review.postedOn = Date.now();
+
+				//TODO: push review to course 
+				course.reviews.push(review);
+
+				//TODO: save course
+				course.save(function(err) {
+					if (err) return next(err);
+				});
+
+				//TODO: save review
+				review.save(function(err) {
+					if (err) {
+						formatError(err, req, res, next);
+					} else {
+
+						//TODO: send response
+          				res.status(201);
+          				res.location('/courses/' + req.params.cID);
+          				res.end();
+        			}
+				});
+				
+			}
 		});
-	});
 });
 
 // DELETE /api/courses/:courseId/reviews/:id - Deletes a review
