@@ -158,6 +158,8 @@ webpackJsonp([0],[
 	      function(response) {
 	        var course = response.data;
 	        _this.course = course;
+	        console.log(course);
+	        console.log(course.reviews);
 	
 	        // only allow the current user to edit their own courses
 	        var currentUser = sessionService.currentUser;

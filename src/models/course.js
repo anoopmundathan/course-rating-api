@@ -47,7 +47,21 @@ var courseSchema = new Schema({
 	]
 });
 
+// overallRating is a calculated, read only property that returns the average 
+// of all of the review ratings for this course rounded to the nearest whole number.
 courseSchema.virtual('overallRating').get(function() {
+
+	var total = 0;
+	var result = 0;
+
+	if (this.reviews) {
+    	for (var i = 0; i < this.reviews.length; i++) {
+      		total = total + this.reviews[i].rating;
+    	}
+    	result = Math.round(total / this.reviews.length);
+  	}
+  return result;
+
 });
 
 // create model

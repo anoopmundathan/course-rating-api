@@ -41,7 +41,7 @@ router.get('/:cID', function(req, res, next) {
 		.populate('user' , '_id fullName')
 		.exec(function(err, course) {
 			if (err) return next(err);
-			res.json(course);
+   			res.send(course.toJSON( { virtuals: true }));
 		});
 });
 
