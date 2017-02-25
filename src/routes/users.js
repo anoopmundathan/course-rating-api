@@ -31,4 +31,18 @@ router.post('/', function(req, res, next) {
 		});
 });
 
+// Unsupported route handling for PUT /api/users 
+router.put('/', function(req, res, next) {
+	var err = new Error('Cannot edit a collection of users');
+	err.status = 403;
+	return next(err);
+});
+
+// Unsupported route handling for DELETE /api/users 
+router.delete('/', function(req, res, next) {
+	var err = new Error('Cannot delete a collection of users');
+	err.status = 403;
+	return next(err);
+});
+
 module.exports = router;
