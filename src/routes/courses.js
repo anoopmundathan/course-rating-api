@@ -151,9 +151,25 @@ router.post('/:cID/reviews', mid.authenticate, function(req, res, next) {
 });
 
 // DELETE /api/courses/:courseId/reviews/:id - Deletes a review
-router.delete('/:cID/reviews/:rID', function(req, res) {
-	res.status(204);
-	res.send('DELETE - Deletes a review');
+router.delete('/:cID/reviews/:rID', mid.authenticate, function(req, res) {
+	// find out course
+	Course.findById(req.params.cID, function(err, course) {
+		if (err) return next(err);
+		// remove review id
+		var itemIndex = course.reviews.indexOf(req.params.cID);
+		if (course.reviews.indexOf(req.params.rID) !== -1) {
+			course.reviews.splice(req.params.rID, 1);
+		} 
+		course.save(function(err) {
+			if (err) return next(err);
+			res.status(204);
+			res.end();
+		});
+		// res.send(course.reviews);
+	});
+	// 
+	// res.status(204);
+	// res.send('DELETE - Deletes a review');
 });
 
 module.exports = router;
