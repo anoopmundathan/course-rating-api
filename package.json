@@ -9,6 +9,9 @@
     "seed": "node ./src/models/seeder.js",
     "bundle": "./node_modules/.bin/webpack"
   },
+  "engines": {
+    "node": "7.0.0"
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
