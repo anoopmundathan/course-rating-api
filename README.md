@@ -7,8 +7,6 @@ AngularJS single page application will consume this RESR API. The AngularJS appl
 
 REST API will include two main resources, “courses” and “users”, containing the following routes:
 
-<img width="1269" alt="screen shot 2017-02-26 at 11 56 21" src="https://cloud.githubusercontent.com/assets/3778229/23339492/937cf8c4-fc1b-11e6-91f9-e0483a727ffd.png">
-
 * /api/courses
   * GET - Returns a list of courses
   * POST - Creates a course
@@ -28,6 +26,7 @@ REST API will include two main resources, “courses” and “users”, contain
 
 * /api/users/
   * GET - Returns the current user
+<img width="1269" alt="screen shot 2017-02-26 at 11 56 21" src="https://cloud.githubusercontent.com/assets/3778229/23339492/937cf8c4-fc1b-11e6-91f9-e0483a727ffd.png">
 
 ## Getting Started
 
