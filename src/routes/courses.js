@@ -62,7 +62,7 @@ router.put('/:cID', mid.authenticate, function(req, res, next) {
 				formatError(err, req, res, next);
 			} else if (!course) {
 				var err = new Error('No Document found');
-				err.status = 401;
+				err.status = 404;
 				return next(err);
 			} else {
 				return res.status(204).end();
@@ -89,7 +89,7 @@ router.post('/:cID/reviews', mid.authenticate, function(req, res, next) {
 		
 			if (!course) {
 				var err = new Error('No document found');
-				err.status = 401;
+				err.status = 404;
 				return next(err);
 			} else {
 
@@ -151,56 +151,82 @@ router.post('/:cID/reviews', mid.authenticate, function(req, res, next) {
 });
 
 // DELETE /api/courses/:courseId/reviews/:id - Deletes a review
-router.delete('/:cID/reviews/:rID', mid.authenticate, function(req, res) {
+router.delete('/:cID/reviews/:rID', mid.authenticate, function(req, res, next) {
+	// 1. find out review 
+	// 2. find out couse
+	// 3. validate
+	// 4. delete review
+	// 5. remove review from course
+
+	var courseID = req.params.cID;
+	var reviewID = req.params.rID;
 	
-	// get review
-	Review.findById(req.params.rID, function(err, review) {
-		if (err) return next(err);
+	Review.findById(reviewID)
+		.populate('user')
+		.exec(function(err, review) {
+			if (err) return next(err);
 
-		// review found, then delete it
-		if (review)
-		{
-			review.remove(function(err) {
-				if (err) return next(err);
-				// get out course
-				Course.findById(req.params.cID, function(err, course) {
+			if (!review) {
+				var err = new Error('Review is not found');
+				err.status = 404;
+				return next(err);
+			}
+
+			Course.findById(courseID)
+				.populate('user')
+				.exec(function(err, course) {
+					
 					if (err) return next(err);
-					// remove review id from course
-					var itemIndex = course.reviews.indexOf(req.params.cID);
-					if (course.reviews.indexOf(req.params.rID) !== -1) {
-						course.reviews.splice(req.params.rID, 1);
-					} 
-					course.save(function(err) {
-						if (err) return next(err);
-						res.status(204);
-						res.end();
-					});
-				});
-			});
 
-		} else {
-			var err = new Error('Review is not found');
-			err.status = 401;
-			return next(err);
-		}		
-	});
+					if(!course) {
+						var err = new Error('Course is not Found');
+						err.status = 404;
+						return next(err);
+					} 
+
+					// Don't allow anyone to delete a review other than the review's user and the course owner.
+					if (req.user._id === course.user._id || req.user._id === review.user._id) {
+						
+						// Remove review from reviews array
+						review.remove(function(err) {
+							if (err) return next(err);
+							
+							if (course.reviews.indexOf(reviewID) !== -1) {
+								course.reviews.splice(courseID, 1);
+							} 
+							course.save(function(err) {
+								if (err) return next(err);
+								res.status(204);
+								res.end();
+							}); // course.save
+						}); // end of review.remove
+
+					} else {
+						var err = new Error('Only review owner or course owner can delete review');
+						err.status = 404;
+						return next(err);
+					}
+			}); // End of Course.findById
+	}); // End of Review.findById
 });
 
-// Unsupported route handling for PUT /api/courses
+/*** UNSUPPORTED ROUTE HANDLING ***/
+
+// PUT /api/courses
 router.put('/', function(req, res, next) {
 	var err = new Error('Cannot edit a collection of courses');
 	err.status = 403;
 	return next(err);
 });
 
-// Unsupported route handling for DELETE /api/courses 
+// DELETE /api/courses 
 router.delete('/', function(req, res, next) {
 	var err = new Error('Cannot delete a collection of courses');
 	err.status = 403;
 	return next(err);
 });
 
-// Unsupported route handling for POST /api/courses/:id
+// POST /api/courses/:id
 router.post('/:id', function(req, res, next) {
 	var err = new Error("Use the '/api/courses' route to create a course");
 	res.setHeader('Allow', 'GET,PUT');
@@ -208,35 +234,35 @@ router.post('/:id', function(req, res, next) {
 	return next(err);
 });
 
-// Unsupported route handling for DELETE /api/courses/:id
+// DELETE /api/courses/:id
 router.delete('/:id', function(req, res, next) {
 	var err = new Error('Cannot delete a course');
 	err.status = 403;
 	return next(err);
 });
 
-// Unsupported route handling for PUT /api/courses/:courseId/reviews
+// PUT /api/courses/:courseId/reviews
 router.put('/:courseId/reviews', function(req, res, next) {
 	var err = new Error('Cannot edit a collection of reviews');
 	err.status = 403;
 	return next(err);
 });
 
-// Unsupported route handling for PUT /api/courses/:courseId/reviews
+// PUT /api/courses/:courseId/reviews
 router.delete('/:courseId/reviews', function(req, res, next) {
 	var err = new Error('Cannot delete a collection of reviews');
 	err.status = 403;
 	return next(err);
 });
 
-// Unsupported route handling for GET /api/courses/:courseId/reviews/:id
+// GET /api/courses/:courseId/reviews/:id
 router.get('/:courseId/reviews/:id', function(req, res, next) {
 	var err = new Error("Cannot get a single review. Use the '/api/courses/:id' route instead to get the reviews for a specific course");
 	err.status = 403;
 	return next(err);
 });
 
-// Unsupported route handling for POST /api/courses/:courseId/reviews/:id
+// POST /api/courses/:courseId/reviews/:id
 router.post('/:courseId/reviews/:id', function(req, res, next) {
 	var err = new Error("Use the '/api/courses/:courseId/reviews' route to create a review");
 	err.status = 405;
@@ -244,7 +270,7 @@ router.post('/:courseId/reviews/:id', function(req, res, next) {
 	return next(err);
 });
 
-// Unsupported route handling for PUT /api/courses/:courseId/reviews/:id
+// PUT /api/courses/:courseId/reviews/:id
 router.put('/:courseId/reviews/:id', function(req, res, next) {
 	var err = new Error('Cannot edit a review');
 	err.status = 403;

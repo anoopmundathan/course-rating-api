@@ -37,11 +37,11 @@ function authenticate(req, res, next) {
 	        		
 	        		req.user = user;
 
-	        		next();
+	        		return next();
 	        	} else {
 	        		var error = new Error('Password is not matching');
 	          		error.status = 401;
-	          		next(err);
+	          		return next(err);
 	        	}
 	        
 	        }); // end of bcrypt
