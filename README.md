@@ -1,6 +1,56 @@
 # course-rating-api
 Treehouse Project 11 - Build a Course Rating API With Express
 
+REST API using Express. The API will provide a way for users to review educational courses: users can see a list of courses in a database; add courses to the database; and add reviews for a specific course.
+
+AngularJS single page application will consume this RESR API. The AngularJS application includes views to display a list of courses, display the details for a course including reviews and ability to post/delete a review, create or update a course, register a user, and login a user.
+
+REST API will include two main resources, “courses” and “users”, containing the following routes:
+
+* /api/courses
+  * GET - Returns a list of courses
+  * POST - Creates a course
+  
+* /api/courses/:id
+  * GET - Returns a single course
+  * PUT - Updates a course
+  
+* /api/courses/:courseId/reviews
+  * POST - Creates a review for the specified course
+
+* /api/courses/:courseId/reviews/:id
+  * DELETE - Deletes a review
+
+* /api/users
+  * POST - Creates a user
+
+* /api/users/
+  * GET - Returns the current user
+
+## Getting Started
+
+### Prerequisite
+[Node.js](https://nodejs.org/en/)
+
+[MongoDB](https://www.mongodb.com/)
+### Setup
+```
+$ git clone https://github.com/anoopmundathan/course-rating-api.git
+$ cd course-rating-api
+```
+### Install
+```
+$ npm i
+```
+### Run
+``` 
+$ npm start
+```
+### View application
+``` 
+http://localhost:5000
+```
+
 #### Project Resources
 [Mongo Basics] (https://teamtreehouse.com/library/mongo-basics)
 
