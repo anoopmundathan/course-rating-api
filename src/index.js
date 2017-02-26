@@ -12,7 +12,7 @@ var users = require('./routes/users');
 
 var app = express();
 
-mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/course-rating');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/course-rating');
 // mongoose.connect('mongodb://heroku_1qv8ngq4:ghkb8l9929m25aee3p02sk5atb@ds161169.mlab.com:61169/heroku_1qv8ngq4');
 var db = mongoose.connection;
 
