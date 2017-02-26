@@ -1,8 +1,9 @@
 'use strict';
 
+var User = require('../models/user').User;
+
 var auth = require('basic-auth');
 var bcrypt = require('bcrypt');
-var User = require('../models/user').User;
 
 function authenticate(req, res, next) {
 

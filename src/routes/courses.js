@@ -3,11 +3,15 @@
 var express = require('express');
 var router = express.Router();
 
-var formatError = require('../middleware/format-error');
-var mid = require('../middleware/auth');
 // import models
 var Course = require('../models/course').Course;
+var User = require('../models/review').User;
 var Review = require('../models/review').Review;
+
+// import middleware
+var formatError = require('../middleware/format-error');
+var mid = require('../middleware/auth');
+
 
 // GET /api/courses - Returns a list of courses
 router.get('/', function(req, res, next) {
@@ -20,7 +24,7 @@ router.get('/', function(req, res, next) {
 });
 
 // POST /api/courses - Create a course
-router.post('/', function(req, res, next) {
+router.post('/', mid.authenticate, function(req, res, next) {
 
 	Course.create(req.body, function(err) {
 		if (err) {
@@ -152,17 +156,11 @@ router.post('/:cID/reviews', mid.authenticate, function(req, res, next) {
 
 // DELETE /api/courses/:courseId/reviews/:id - Deletes a review
 router.delete('/:cID/reviews/:rID', mid.authenticate, function(req, res, next) {
-	// 1. find out review 
-	// 2. find out couse
-	// 3. validate
-	// 4. delete review
-	// 5. remove review from course
 
 	var courseID = req.params.cID;
 	var reviewID = req.params.rID;
 	
 	Review.findById(reviewID)
-		.populate('user')
 		.exec(function(err, review) {
 			if (err) return next(err);
 
@@ -184,8 +182,8 @@ router.delete('/:cID/reviews/:rID', mid.authenticate, function(req, res, next) {
 						return next(err);
 					} 
 
-					// Don't allow anyone to delete a review other than the review's user and the course owner.
-					if (req.user._id === course.user._id || req.user._id === review.user._id) {
+					// Don't allow anyone to delete a review other than the course owner.
+					if (req.user._id.toJSON() === course.user._id.toJSON()) {
 						
 						// Remove review from reviews array
 						review.remove(function(err) {
@@ -202,7 +200,7 @@ router.delete('/:cID/reviews/:rID', mid.authenticate, function(req, res, next) {
 						}); // end of review.remove
 
 					} else {
-						var err = new Error('Only review owner or course owner can delete review');
+						var err = new Error('Only review course owner can delete review');
 						err.status = 404;
 						return next(err);
 					}

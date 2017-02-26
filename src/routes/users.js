@@ -1,11 +1,14 @@
 'use strict';
 
 var express = require('express');
-var mid = require('../middleware/auth');
-var formatError = require('../middleware/format-error');
 var router = express.Router();
 
+// import model
 var User = require('../models/user').User;
+
+// import middleware
+var mid = require('../middleware/auth');
+var formatError = require('../middleware/format-error');
 
 // GET /api/users - Returns the current user
 router.get('/', mid.authenticate, function(req, res, next) {
@@ -31,14 +34,16 @@ router.post('/', function(req, res, next) {
 		});
 });
 
-// Unsupported route handling for PUT /api/users 
+/*** UNSUPPORTED ROUTE HANDLING ***/
+
+// PUT /api/users 
 router.put('/', function(req, res, next) {
 	var err = new Error('Cannot edit a collection of users');
 	err.status = 403;
 	return next(err);
 });
 
-// Unsupported route handling for DELETE /api/users 
+// DELETE /api/users 
 router.delete('/', function(req, res, next) {
 	var err = new Error('Cannot delete a collection of users');
 	err.status = 403;
